@@ -1,85 +1,66 @@
-# Smart-irrigation-System
-This is IoT based project for Monitor plants health and Control control irrigation process 
+# Smart Irrigation System 🌿💧
 
-Welcome to the Smart Irrigation System project! This repository contains the code and documentation for building a smart irrigation system using NodeMCU, Relay module, DHT11 sensor, Moisture sensor, and an air water valve to control water flow.
+This is an IoT-based system designed to monitor plant health and automatically control the irrigation process using environmental sensors, automated water valves, and a custom **Node-RED Web Dashboard**.
 
-**Complete Report of this project** : https://drive.google.com/file/d/1sqiVt4n40g6_vmeh06R-Bm4rwvRZe_ns/view?usp=sharing
+Welcome to the Smart Irrigation System repository! This documentation provides a comprehensive overview of the system architecture, hardware requirements, and circuit configurations.
 
-**Demo Video** : https://youtu.be/WtQtlA_PUv8
+---
 
-**NOTE**: This Repository contains two different project sources (both are nearly same)
-          
-          1. Smart Irrigation System using Blynk IOT (Shown in Demo Video and aboves report)
-          2. Garden System Project (Contains following information)
+### 🌐 Demo & Full Project Documentation
 
-**Project Overview :**
-The Smart Irrigation System is designed to automate the process of watering plants by monitoring soil moisture levels and environmental conditions. This project aims to conserve water and ensure that plants receive the right amount of water, enhancing their growth and health.
+* 📄 **Complete Project Report:** [View Report on Google Drive](https://drive.google.com/file/d/1sqiVt4n40g6_vmeh06R-Bm4rwvRZe_ns/view?usp=sharing)
+* 🎥 **Demo Video:** [Watch Video on YouTube](https://youtu.be/WtQtlA_PUv8)
 
-**Components**
-NodeMCU: A low-cost open-source IoT platform. It includes firmware that runs on the ESP8266 Wi-Fi SoC from Espressif Systems, and hardware which is based on the ESP-12 module.
-Relay Module: Used to control the water valve. It acts as a switch that opens or closes the circuit based on the signals received from the NodeMCU.
-DHT11 Sensor: A basic, low-cost digital temperature and humidity sensor. It uses a capacitive humidity sensor and a thermistor to measure the surrounding air.
-Moisture Sensor: Measures the volumetric content of water in the soil and provides an analog output that can be read by the NodeMCU.
-Air Water Valve: Controls the flow of water to the irrigation system. It is operated by the relay module based on the moisture sensor's readings.
+> **NOTE:** This project architecture features a **Node-RED & MQTT Control Engine** for centralized local and web-based dashboard management.
 
-**Features**
-Automated Irrigation: Automatically waters plants when soil moisture levels drop below a predefined threshold.
-Environmental Monitoring: Monitors temperature and humidity levels using the DHT11 sensor.
-Water Conservation: Ensures optimal use of water resources by only watering when necessary.
-Remote Control and Monitoring: Can be integrated with IoT platforms for remote monitoring and control.
+---
 
-**How It Works**
-Initialization: The NodeMCU initializes the sensors and the relay module.
-Data Collection: The DHT11 sensor collects temperature and humidity data, and the moisture sensor measures the soil moisture level.
-Decision Making: The NodeMCU processes the sensor data and decides whether the soil moisture level is below the threshold.
-Irrigation Control: If the soil moisture is below the threshold, the NodeMCU activates the relay, opening the air water valve to irrigate the plants. Once the desired moisture level is reached, the relay deactivates, closing the valve.
-Monitoring and Logging: Sensor data can be logged and monitored remotely if integrated with an IoT platform.
+### 📌 Project Overview
 
-**Getting Started**
-Prerequisites
-NodeMCU (ESP8266)
-Relay Module
-DHT11 Sensor
-Moisture Sensor
-Air Water Valve
-Jumper wires
-Breadboard or PCB
-Installation
-Clone the Repository
+The Smart Irrigation System automates plant watering by continuously reading soil moisture levels and surrounding climate parameters. The system minimizes water wastage while ensuring optimal soil hydration levels for plant growth.
 
-bash
-Copy code
-git clone https://github.com/TejasVarute/smart-irrigation-System.git
-cd smart-irrigation-system
-Install Required Libraries
-Ensure you have the following libraries installed in your Arduino IDE:
+#### Key Features
+* 🤖 **Automated Irrigation:** Triggers water flow via relay when soil moisture drops below threshold.
+* 🌡️ **Environmental Monitoring:** Real-time temperature and humidity tracking using the DHT11 sensor.
+* 💧 **Water Conservation:** Prevents overwatering through real-time threshold control.
+* 🖥️ **Node-RED Web Dashboard:** Real-time web visualization with gauges, graphs, and manual valve controls via MQTT protocol.
 
-ESP8266WiFi
-DHT sensor library
-Adafruit Unified Sensor library
-Upload the Code
-Connect your NodeMCU to your computer and upload the code from src/main.ino using the Arduino IDE.
+---
 
-Wiring Diagram
-Follow the wiring diagram provided in the docs/wiring_diagram.png file to connect your components correctly.
+### 🛠️ Hardware Components Required
 
-Configuration
-Modify the configuration settings in the src/config.h file to set your Wi-Fi credentials and other parameters such as the soil moisture threshold.
+| Component | Description |
+| :--- | :--- |
+| **NodeMCU (ESP8266)** | Wi-Fi-enabled microcontroller running system logic and MQTT communication. |
+| **Relay Module** | Electronic switch controlling power to the water valve/solenoid. |
+| **DHT11 Sensor** | Digital sensor measuring ambient temperature and air humidity. |
+| **Moisture Sensor** | Analog sensor monitoring volumetric soil moisture. |
+| **Air / Water Valve** | Solenoid / mini water pump controlling irrigation flow. |
+| **Power Supply & Wiring** | Breadboard / PCB, jumper wires, and 5V power adapter. |
 
-Usage
-Once the code is uploaded and the system is powered on, the Smart Irrigation System will start monitoring the soil moisture levels and environmental conditions, and control the water flow accordingly.
+---
 
-Contributing
-Contributions are welcome! Please read the CONTRIBUTING.md file for guidelines on how to contribute to this project.
+### ⚙️ How It Works
 
-License
-This project is licensed under the MIT License - see the LICENSE file for details.
+1. **Initialization:** NodeMCU initializes Wi-Fi connection, pin states, and connects to the Node-RED MQTT Broker.
+2. **Data Collection:** DHT11 reads temperature and humidity; the moisture sensor samples soil hydration.
+3. **Telemetry & Dashboard:** Sensor readings are published as JSON payloads to Node-RED for live web dashboard updates.
+4. **Irrigation Control:**
+   * **Automatic Mode:** Logic processing compares moisture levels against predefined thresholds to control the relay.
+   * **Manual Mode:** Commands sent directly from the Node-RED Web UI override valve state.
+5. **Feedback Loop:** Hardware status is confirmed back to Node-RED in real-time.
 
-Acknowledgements
-Special thanks to the open-source community and the developers of the libraries used in this project.
+---
 
-## License & Access
+### 🔒 Strictly Controlled Source Code Access
 
-© 2026 Your Name. All Rights Reserved.
+This repository contains public documentation, system specifications, and hardware architecture diagrams. **The core firmware source code and Node-RED flows are proprietary, closed-source, and strictly private.**
 
-This project is proprietary software. You may not copy, modify, distribute, or create derivative works from this repository without explicit permission.
+> ⚠️ **NO UNAUTHORIZED ACCESS:** The source code cannot be accessed, shared, or cloned by anyone without explicit prior notification, approval, and authorization directly from the project administrator.
+
+#### Requesting Access:
+If you are an authorized collaborator, reviewer, or developer needing source code access:
+
+1. Formally intimate and request access permissions directly from the project administrator.
+2. Once explicit private access is granted and authenticated:
+   ```bash
