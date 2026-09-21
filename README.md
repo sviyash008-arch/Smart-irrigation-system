@@ -4,17 +4,6 @@ This is an IoT-based system designed to monitor plant health and automatically c
 
 Welcome to the Smart Irrigation System repository! This documentation provides a comprehensive overview of the system architecture, hardware requirements, and circuit configurations.
 
----
-
-### 🌐 Demo & Full Project Documentation
-
-* 📄 **Complete Project Report:** [View Report on Google Drive](https://drive.google.com/file/d/1sqiVt4n40g6_vmeh06R-Bm4rwvRZe_ns/view?usp=sharing)
-* 🎥 **Demo Video:** [Watch Video on YouTube](https://youtu.be/WtQtlA_PUv8)
-
-> **NOTE:** This project architecture features a **Node-RED & MQTT Control Engine** for centralized local and web-based dashboard management.
-
----
-
 ### 📌 Project Overview
 
 The Smart Irrigation System automates plant watering by continuously reading soil moisture levels and surrounding climate parameters. The system minimizes water wastage while ensuring optimal soil hydration levels for plant growth.
