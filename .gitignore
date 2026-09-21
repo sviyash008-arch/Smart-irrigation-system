@@ -1,7 +1,28 @@
-# Prerequisites
-*.d
+# ==========================================
+# 1. Hardware Credentials & Security (CRITICAL)
+# ==========================================
+# Ignore actual config file containing real Wi-Fi SSID, passwords, and MQTT server IPs
+src/config.h
+hardware/config.h
 
-# Compiled Object files
+# ==========================================
+# 2. Arduino / ESP8266 Build Artifacts
+# ==========================================
+*.elf
+*.bin
+*.hex
+
+# Build Output Directories
+build/
+Build/
+build-*/
+.pio/
+.pioenvs/
+
+# ==========================================
+# 3. Prerequisites & Compiled Object Files
+# ==========================================
+*.d
 *.slo
 *.lo
 *.o
@@ -11,24 +32,16 @@
 *.gch
 *.pch
 
-# Linker files
+# Linker & Debugger Files
 *.ilk
-
-# Debugger Files
 *.pdb
+*.dwo
 
-# Compiled Dynamic libraries
+# Libraries
 *.so
 *.dylib
 *.dll
 *.so.*
-
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
 *.lai
 *.la
 *.a
@@ -39,12 +52,9 @@
 *.out
 *.app
 
-# Build directories
-build/
-Build/
-build-*/
-
-# CMake generated files
+# ==========================================
+# 4. CMake & Build System Generated Files
+# ==========================================
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
@@ -52,18 +62,26 @@ Makefile
 install_manifest.txt
 compile_commands.json
 
-# Temporary files
+# ==========================================
+# 5. Node-RED & Node.js Dependencies
+# ==========================================
+node_modules/
+.config.json
+.config.nodes.json
+
+# ==========================================
+# 6. IDEs, Editors & System Files
+# ==========================================
+.vscode/
+.idea/
+*.swp
 *.tmp
 *.log
 *.bak
-*.swp
+.DS_Store
+Thumbs.db
 
-# vcpkg
+# Package Managers & Testing
 vcpkg_installed/
-
-# debug information files
-*.dwo
-
-# test output & cache
 Testing/
 .cache/
