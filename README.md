@@ -77,3 +77,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 Acknowledgements
 Special thanks to the open-source community and the developers of the libraries used in this project.
+
+## License & Access
+
+© 2026 Your Name. All Rights Reserved.
+
+This project is proprietary software. You may not copy, modify, distribute, or create derivative works from this repository without explicit permission.
