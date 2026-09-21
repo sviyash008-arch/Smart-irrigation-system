@@ -1,79 +1,142 @@
-#define BLYNK_TEMPLATE_ID "TMPLqR3R9azi"
-#define BLYNK_DEVICE_NAME "Smart Irrigration System"
-#define BLYNK_AUTH_TOKEN "AyuD8HMbvWyypMI7NqeEFtZaGHccEg_K"
-
-#define BLYNK_PRINT Serial
-#include <OneWire.h>
-#include <SPI.h>
-#include <BlynkSimpleEsp8266.h>
+#include <ESP8266WiFi.h>
+#include <PubSubClient.h>
 #include <DHT.h>
-#include <DallasTemperature.h>
-#define ONE_WIRE_BUS D2
-OneWireoneWire(ONE_WIRE_BUS);
-DallasTemperature sensors(&oneWire);
-BlynkTimer timer;
+#include <ArduinoJson.h>
+#include "config.h"
 
-char auth[] = "AyuD8HMbvWyypMI7NqeEFtZaGHccEg_K";
-char ssid[] = "V2029";
-char pass[] = "Wifi-Pass";
-
-#define DHTPIN 2
-#define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
+WiFiClient espClient;
+PubSubClient mqttClient(espClient);
 
-void sendSensor()
-{
-  float h = dht.readHumidity();
-  float t = dht.readTemperature();
+unsigned long lastPublishTime = 0;
+const long PUBLISH_INTERVAL = 5000; 
 
-    if (isnan(h) || isnan(t)) 
-    {
-      return;
+void setupWifi();
+void reconnectMqtt();
+void mqttCallback(char* topic, byte* payload, unsigned int length);
+void publishSensorData();
+
+void setup() {
+  Serial.begin(115200);
+  
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, HIGH);
+
+  dht.begin();
+  
+  setupWifi();
+  mqttClient.setServer(MQTT_SERVER, MQTT_PORT);
+  mqttClient.setCallback(mqttCallback);
+}
+
+void loop() {
+  if (!mqttClient.connected()) {
+    reconnectMqtt();
+  }
+  mqttClient.loop();
+  
+  unsigned long now = millis();
+  if (now - lastPublishTime >= PUBLISH_INTERVAL) {
+    lastPublishTime = now;
+    publishSensorData();
+  }
+}
+
+void setupWifi() {
+  delay(10);
+  Serial.println();
+  Serial.print("Connecting to Wi-Fi Network: ");
+  Serial.println(WIFI_SSID);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("\nWi-Fi Successfully Connected!");
+  Serial.print("ESP8266 Local IP Address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void mqttCallback(char* topic, byte* payload, unsigned int length) {
+  String message = "";
+  for (unsigned int i = 0; i < length; i++) {
+    message += (char)payload[i];
+  }
+  
+  Serial.print("Command received on [");
+  Serial.print(topic);
+  Serial.print("]: ");
+  Serial.println(message);
+
+  if (String(topic) == TOPIC_RELAY_COMMAND) {
+    if (message == "ON" || message == "1") {
+      digitalWrite(RELAY_PIN, LOW); 
+      mqttClient.publish(TOPIC_RELAY_STATUS, "ON");
+      Serial.println("Action: Relay Turned ON (Water Valve Open)");
+    } 
+    else if (message == "OFF" || message == "0") {
+      digitalWrite(RELAY_PIN, HIGH); 
+      mqttClient.publish(TOPIC_RELAY_STATUS, "OFF");
+      Serial.println("Action: Relay Turned OFF (Water Valve Closed)");
     }
-Blynk.virtualWrite(V5, h); //V5 is for Humidity
-Blynk.virtualWrite(V6, t); //V6 is for Temperature
+  }
 }
 
-void Motor()
-{
-Serial.begin(9600);
-pinMode(D2,OUTPUT);
+
+void reconnectMqtt() {
+  while (!mqttClient.connected()) {
+    Serial.print("Attempting MQTT connection to ");
+    Serial.print(MQTT_SERVER);
+    Serial.print("...");
+
+    String clientId = "ESP8266-SmartIrrigation-" + String(random(0xffff), HEX);
+    
+    if (mqttClient.connect(clientId.c_str(), MQTT_USER, MQTT_PASSWORD)) {
+      Serial.println("Connected to MQTT Broker!");
+      mqttClient.subscribe(TOPIC_RELAY_COMMAND);
+      Serial.print("Subscribed to topic: ");
+      Serial.println(TOPIC_RELAY_COMMAND);
+    } else {
+      Serial.print("Failed to connect, rc=");
+      Serial.print(mqttClient.state());
+      Serial.println(" Retrying in 5 seconds...");
+      delay(5000);
+    }
+  }
 }
 
-void setup()
-{
-Serial.begin(9600);
-Blynk.begin(auth, ssid, pass);
-timer.setInterval(1000L, sendSensor);
-dht.begin();
 
-Serial.begin(115200);
-Blynk.begin(auth, ssid, pass);
-sensors.begin();
-}
-  int sensor=0;
-  int output=0;
+void publishSensorData() {
+  float temp = dht.readTemperature();
+  float humidity = dht.readHumidity();
+  int rawSoil = analogRead(SOIL_PIN);
+  
 
-void sendTemps()
-{
-  sensor=analogRead(A0);
-  output=(100-map(sensor,0,1023,0,100)); //in place 100 there is 145 depending upon Moisture sensor
-delay(1000);
+  int soilMoisturePercent = map(rawSoil, 1024, 300, 0, 100);
+  soilMoisturePercent = constrain(soilMoisturePercent, 0, 100);
 
-sensors.requestTemperatures();
-  float temp = sensors.getTempCByIndex(0);
+  if (isnan(temp) || isnan(humidity)) {
+    Serial.println("Warning: Failed to read from DHT sensor!");
+    return;
+  }
 
-Serial.println(temp);
-Serial.print(output);
 
-Blynk.virtualWrite(V1, temp);
-Blynk.virtualWrite(V2,output);
-delay(1000);
-}
+  StaticJsonDocument<200> doc;
+  doc["temperature"]   = temp;
+  doc["humidity"]      = humidity;
+  doc["soil_moisture"] = soilMoisturePercent;
+  doc["raw_soil"]      = rawSoil;
 
-void loop()
-{
-Blynk.run();
-timer.run();
-sendTemps();
+  char jsonBuffer[512];
+  serializeJson(doc, jsonBuffer);
+
+ 
+  mqttClient.publish(TOPIC_TELEMETRY, jsonBuffer);
+  
+  Serial.print("Published payload to Node-RED: ");
+  Serial.println(jsonBuffer);
 }
