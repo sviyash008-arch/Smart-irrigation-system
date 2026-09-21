@@ -45,11 +45,4 @@ The Smart Irrigation System automates plant watering by continuously reading soi
 
 This repository contains public documentation, system specifications, and hardware architecture diagrams. **The core firmware source code and Node-RED flows are proprietary, closed-source, and strictly private.**
 
-> ⚠️ **NO UNAUTHORIZED ACCESS:** The source code cannot be accessed, shared, or cloned by anyone without explicit prior notification, approval, and authorization directly from the project administrator.
 
-#### Requesting Access:
-If you are an authorized collaborator, reviewer, or developer needing source code access:
-
-1. Formally intimate and request access permissions directly from the project administrator.
-2. Once explicit private access is granted and authenticated:
-   ```bash
